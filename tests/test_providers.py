@@ -58,6 +58,10 @@ def test_real_sdk_serializes_provider_contract(provider, mode, budget_key, fores
         assert requests[0]["response_format"]["type"] == mode
         assert requests[0][budget_key] == 8192
         assert requests[0]["model"] == "test-model"
+        if provider == "qwen":
+            assert requests[0]["enable_thinking"] is False
+        else:
+            assert "enable_thinking" not in requests[0]
     finally:
         backend.close()
 
@@ -105,3 +109,34 @@ def test_missing_key_has_actionable_error(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     with pytest.raises(ValueError, match="Missing OPENAI_API_KEY"):
         ProviderConfig.from_env("openai")
+
+
+def test_response_metadata_is_captured_and_reset_after_error():
+    responses = iter(
+        [
+            httpx.Response(
+                200,
+                headers={"x-request-id": "trace-1"},
+                json=_completion()
+                | {
+                    "usage": {"prompt_tokens": 5, "completion_tokens": 6, "total_tokens": 11},
+                },
+            ),
+            httpx.Response(429, json={"error": {"message": "quota"}}),
+        ]
+    )
+    backend = OpenAICompatibleBackend(
+        ProviderConfig("qwen", "requested", "hidden", "unused"),
+        _client(lambda request: next(responses)),
+    )
+    try:
+        backend.complete([])
+        assert backend.last_metadata["actual_model"] == "test-model"
+        assert backend.last_metadata["usage"]["total_tokens"] == 11
+        assert backend.last_metadata["request_id"] == "trace-1"
+        with pytest.raises(LLMError):
+            backend.complete([])
+        assert backend.last_metadata["http_status"] == 429
+        assert "usage" not in backend.last_metadata
+    finally:
+        backend.close()

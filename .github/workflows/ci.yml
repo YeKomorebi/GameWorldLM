@@ -17,6 +17,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - run: python -m pip install -e ".[dev]"
+      - run: gameworldlm-real --help
+      - run: gameworldlm-dataset --help
       - run: ruff check .
       - run: pytest -q
       - run: gameworldlm examples --provider fixture --output-dir outputs/ci

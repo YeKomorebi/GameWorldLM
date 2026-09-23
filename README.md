@@ -1,6 +1,19 @@
-# GameWorldLM
+# GameWorldLM v0.2
 
 GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。第一阶段使用现有 OpenAI 或 Qwen API，不训练模型，也不让模型生成可执行游戏代码。
+
+v0.2 新增真实生成记录、十场景 Qwen 测试入口和 LoRA 数据集导出，保持原有 World State schema 不变。完整说明见 [数据记录与训练格式](docs/dataset_format.md)。
+
+已完成真实 Qwen 调用：首轮十场景批测通过 6/10，改进反馈并补测后十类场景均有有效地图。累计记录 16 个 run，最终导出 10 条有效训练样本；详见 [真实调用测试报告](docs/real_generation_report.md)。
+
+```bash
+python -m pip install -e ".[dev]"
+# 在 .env 中配置 QWEN_API_KEY 后，先测试一个场景，再运行十场景套件。
+python -m examples.real_generation --provider qwen --limit 1
+python -m examples.real_generation --provider qwen
+```
+
+每个真实生成任务保存到 `outputs/real/runs/<run_id>/`，包含 prompt、模型与用量记录、每次尝试的原始响应和校验报告，以及通过校验后的 `world.json` 与 `map.png`。每批结束自动导出 messages 和 Alpaca JSONL；失败项与 fixture 不进入训练集。重复运行不会覆盖历史数据。
 
 ![Forest village](docs/previews/dark_forest_village.png)
 
@@ -43,6 +56,9 @@ GameWorldLM/
   examples/
     prompts.json     五个中文场景及对象数量期望
     scenarios.py    手工构造的固定测试世界
+    real_prompts.json 十个真实调用测试 prompt
+    real_generation.py 真实 API 批量生成入口
+  dataset/           逐次记录、质量过滤和 LoRA 数据导出
   tests/             单元和端到端离线测试
   docs/previews/     五组可直接查看的 JSON / PNG
   .github/workflows/ci.yml
@@ -112,7 +128,7 @@ gameworldlm examples --provider qwen --output-dir outputs/qwen
 
 OpenAI 使用 [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) 的严格 JSON Schema；Qwen 使用兼容接口的 `json_object` 模式，并由本地 Pydantic 和空间校验补足约束。所选模型必须支持相应输出模式。SDK 最多重试一次临时网络错误，生成器默认最多进行三次完整生成或修正；调用可能产生接口费用。认证、拒绝、截断等错误会明确返回，不会当作成功地图。
 
-当前自动验证覆盖离线场景及模拟 HTTP 响应。真实 API 的可用性和自然语言遵循能力需要你配置 Key 后运行 `examples --provider ...` 验证；没有凭据时不宣称完成真实模型测试。
+自动测试使用离线场景及模拟 HTTP 响应，不消耗 API 配额。v0.2 的真实 Qwen 验证通过 `python -m examples.real_generation` 独立执行，其结果保存在带时间和 request ID 的运行记录中；旧的 `gameworldlm examples` 命令继续保留五场景回归行为。
 
 ## Spatial Token
 

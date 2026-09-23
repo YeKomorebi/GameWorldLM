@@ -1,0 +1,42 @@
+[
+  {
+    "id": "forest_village", "prompt": "生成32x24格的黑暗森林魔法村庄（forest）。有3个木屋、1条从北到南的河流、1座桥、2段分别连接桥两端的道路和2个怪物，可添加少量树木。道路与桥要有connected_to关系。",
+    "expectations": {"object_counts": {"house": 3, "river": 1, "bridge": 1, "road": 2, "monster": 2}, "map": {"width": 32, "height": 24, "biome": "forest"}, "minimum_relations": {"connected_to": 2}}
+  },
+  {
+    "id": "snow_castle", "prompt": "生成32x24格的冰雪城堡（snow）。有1座城堡、2座守卫塔、1条与城堡边缘相接的道路、3块岩石和2个守卫npc。道路与城堡有connected_to关系，其中一个守卫在城堡附近但不在内部，并用near表示。",
+    "expectations": {"object_counts": {"castle": 1, "tower": 2, "road": 1, "rock": 3, "npc": 2}, "map": {"width": 32, "height": 24, "biome": "snow"}, "minimum_relations": {"connected_to": 1, "near": 1}}
+  },
+  {
+    "id": "desert_ruins", "prompt": "生成32x24格的沙漠遗迹（desert）。有3座废墟、2个沙丘、1座传送门和2个怪物。一个怪物在传送门附近，用near表示；各废墟彼此分开。",
+    "expectations": {"object_counts": {"ruin": 3, "dune": 2, "portal": 1, "monster": 2}, "map": {"width": 32, "height": 24, "biome": "desert"}, "minimum_relations": {"near": 1}}
+  },
+  {
+    "id": "apocalyptic_city", "prompt": "生成32x24格的末日城市（city）。有4栋废弃房屋、2段首尾共边的道路、3辆废弃车辆和3个怪物。房屋分布在道路两侧，车辆在道路上且互不重叠，道路之间用connected_to表示连接。",
+    "expectations": {"object_counts": {"house": 4, "road": 2, "vehicle": 3, "monster": 3}, "map": {"width": 32, "height": 24, "biome": "city"}, "minimum_relations": {"connected_to": 1}}
+  },
+  {
+    "id": "magic_academy", "prompt": "生成32x24格的魔法学院（arcane）。有1座图书馆、2座法师塔、1个庭院、3颗水晶、1座传送门和2个学徒npc。两个学徒都在庭院内部，各有一条指向庭院的inside关系，不要把学徒放在建筑上。",
+    "expectations": {"object_counts": {"library": 1, "tower": 2, "courtyard": 1, "crystal": 3, "portal": 1, "npc": 2}, "map": {"width": 32, "height": 24, "biome": "arcane"}, "minimum_relations": {"inside": 2}}
+  },
+  {
+    "id": "small_forest_camp", "prompt": "生成16x16格的小型森林营地（forest）。恰好有2个木屋、6棵树、1个怪物和1条道路。保留空地，所有对象必须完整位于地图中，木屋彼此不重叠。",
+    "expectations": {"object_counts": {"house": 2, "tree": 6, "monster": 1, "road": 1}, "map": {"width": 16, "height": 16, "biome": "forest"}}
+  },
+  {
+    "id": "forest_watchtowers", "prompt": "生成32x24格的森林哨所（forest）。有3座瞭望塔、4段城墙、2间房屋和3个守卫npc。每个守卫位于一座塔的附近但不在塔内，并用near关系表示。",
+    "expectations": {"object_counts": {"tower": 3, "wall": 4, "house": 2, "npc": 3}, "map": {"width": 32, "height": 24, "biome": "forest"}, "minimum_relations": {"near": 3}}
+  },
+  {
+    "id": "frozen_outpost", "prompt": "生成32x24格的冰原前哨（snow）。有2间房屋、4段城墙、3个守卫npc、1颗水晶和3块岩石。城墙之间留出通道，守卫不与房屋、城墙或岩石重叠。",
+    "expectations": {"object_counts": {"house": 2, "wall": 4, "npc": 3, "crystal": 1, "rock": 3}, "map": {"width": 32, "height": 24, "biome": "snow"}}
+  },
+  {
+    "id": "arcane_sanctuary", "prompt": "生成32x24格的奥术圣所（arcane）。有1个大庭院、3座法师塔、2座传送门、5颗水晶和2个npc。npc均在庭院内，用两条inside关系记录；塔围绕庭院，传送门互不重叠。",
+    "expectations": {"object_counts": {"courtyard": 1, "tower": 3, "portal": 2, "crystal": 5, "npc": 2}, "map": {"width": 32, "height": 24, "biome": "arcane"}, "minimum_relations": {"inside": 2}}
+  },
+  {
+    "id": "desert_caravan", "prompt": "生成24x20格的沙漠商队驿站（desert）。有1个庭院、4棵树、2座废墟、1条道路、2辆商队车辆和2个商人npc。两辆车停在道路上但互不重叠，商人在庭院内，用inside表示。",
+    "expectations": {"object_counts": {"courtyard": 1, "tree": 4, "ruin": 2, "road": 1, "vehicle": 2, "npc": 2}, "map": {"width": 24, "height": 20, "biome": "desert"}, "minimum_relations": {"inside": 2}}
+  }
+]

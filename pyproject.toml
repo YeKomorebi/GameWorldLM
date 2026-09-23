@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gameworldlm"
-version = "0.1.0"
+version = "0.2.0"
 description = "Natural language to validated spatial tokens and 2D world maps"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -20,13 +20,15 @@ dev = ["pytest>=8,<10", "ruff>=0.9,<1", "pillow>=10,<13"]
 
 [project.scripts]
 gameworldlm = "gameworldlm.cli:main"
+gameworldlm-real = "examples.real_generation:main"
+gameworldlm-dataset = "dataset.export:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*"]
+include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*", "dataset*"]
 
 [tool.setuptools.package-data]
-examples = ["prompts.json"]
+examples = ["prompts.json", "real_prompts.json"]
 assets = ["placeholder/*.png", "placeholder/*.md"]
 
 [tool.pytest.ini_options]

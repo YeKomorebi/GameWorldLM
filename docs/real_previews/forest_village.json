@@ -1,0 +1,300 @@
+{
+  "schema_version": "1.0",
+  "scene": "dark_forest_village",
+  "map": {
+    "width": 32,
+    "height": 24,
+    "biome": "forest"
+  },
+  "objects": [
+    {
+      "object_type": "river",
+      "id": "river_0",
+      "position": [
+        15,
+        0
+      ],
+      "attributes": {
+        "size": [
+          2,
+          24
+        ],
+        "style": null,
+        "material": "water",
+        "tags": [
+          "flowing"
+        ]
+      }
+    },
+    {
+      "object_type": "bridge",
+      "id": "bridge_0",
+      "position": [
+        15,
+        11
+      ],
+      "attributes": {
+        "size": [
+          2,
+          2
+        ],
+        "style": "wooden",
+        "material": "wood",
+        "tags": [
+          "crossing"
+        ]
+      }
+    },
+    {
+      "object_type": "road",
+      "id": "road_north",
+      "position": [
+        8,
+        11
+      ],
+      "attributes": {
+        "size": [
+          7,
+          2
+        ],
+        "style": "dirt",
+        "material": "gravel",
+        "tags": [
+          "north_segment"
+        ]
+      }
+    },
+    {
+      "object_type": "road",
+      "id": "road_south",
+      "position": [
+        17,
+        11
+      ],
+      "attributes": {
+        "size": [
+          7,
+          2
+        ],
+        "style": "dirt",
+        "material": "gravel",
+        "tags": [
+          "south_segment"
+        ]
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_0",
+      "position": [
+        4,
+        4
+      ],
+      "attributes": {
+        "size": [
+          3,
+          3
+        ],
+        "style": "timber_frame",
+        "material": "wood",
+        "tags": [
+          "dwelling"
+        ]
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_1",
+      "position": [
+        24,
+        5
+      ],
+      "attributes": {
+        "size": [
+          3,
+          3
+        ],
+        "style": "timber_frame",
+        "material": "wood",
+        "tags": [
+          "dwelling"
+        ]
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_2",
+      "position": [
+        12,
+        18
+      ],
+      "attributes": {
+        "size": [
+          3,
+          3
+        ],
+        "style": "timber_frame",
+        "material": "wood",
+        "tags": [
+          "dwelling"
+        ]
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_0",
+      "position": [
+        3,
+        7
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "shadow_wolf",
+        "material": null,
+        "tags": [
+          "hostile"
+        ]
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_1",
+      "position": [
+        27,
+        8
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "bog_hag",
+        "material": null,
+        "tags": [
+          "hostile"
+        ]
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_0",
+      "position": [
+        2,
+        2
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "oak",
+        "material": "wood",
+        "tags": [
+          "ancient"
+        ]
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_1",
+      "position": [
+        28,
+        3
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "willow",
+        "material": "wood",
+        "tags": [
+          "weeping"
+        ]
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_2",
+      "position": [
+        10,
+        21
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "black_birch",
+        "material": "wood",
+        "tags": [
+          "twisted"
+        ]
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_3",
+      "position": [
+        11,
+        20
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "yew",
+        "material": "wood",
+        "tags": [
+          "poisonous"
+        ]
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "connected_to",
+      "source": "road_north",
+      "target": "bridge_0"
+    },
+    {
+      "relation_type": "connected_to",
+      "source": "bridge_0",
+      "target": "road_south"
+    },
+    {
+      "relation_type": "near",
+      "source": "monster_0",
+      "target": "house_0"
+    },
+    {
+      "relation_type": "near",
+      "source": "monster_1",
+      "target": "house_1"
+    },
+    {
+      "relation_type": "near",
+      "source": "tree_0",
+      "target": "house_0"
+    },
+    {
+      "relation_type": "near",
+      "source": "tree_1",
+      "target": "house_1"
+    },
+    {
+      "relation_type": "near",
+      "source": "tree_2",
+      "target": "house_2"
+    },
+    {
+      "relation_type": "near",
+      "source": "tree_3",
+      "target": "house_2"
+    }
+  ]
+}
