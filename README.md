@@ -1,8 +1,21 @@
-# GameWorldLM v0.3
+# GameWorldLM v0.3.1
 
 GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。第一阶段使用现有 OpenAI 或 Qwen API，不训练模型，也不让模型生成可执行游戏代码。
 
-v0.3 新增可恢复的自动数据生成流水线：离线构造 **10,000 条不重复 prompt**，覆盖 forest、desert、ice、city、dungeon、fantasy、cyberpunk；使用 Qwen 执行生成、校验、渲染。成功样本写入 `dataset/train.jsonl`，失败样本写入 `dataset/failed.jsonl`，统计保存到 `dataset/report.json`。World State schema 与原有测试保持不变。
+v0.3.1 支持指定样本规模、复用已有 prompt，并自动按 **80% / 10% / 10%** 划分 train / val / test。成功全集保存在 `valid.jsonl`，失败样本保存在 `failed.jsonl`；报告包含总数、有效数、失败数、对象分布和预计完成时间。默认 **10,000 条生成能力**、World State schema 和原有测试均保留。
+
+```bash
+# 从已有万条清单选取 1,000 条，使用独立目录生成及自动划分。
+python -m dataset_generation.dataset_builder --prompts-file dataset/prompts.jsonl --num-samples 1000 --output-dir outputs/v031-1000
+# 对已生成的数据离线划分，无需再次调用 Qwen；目标必须是新目录。
+python -m dataset_generation.splits --source-dir dataset --output-dir outputs/training-snapshot
+# 查看统计与实时完成时间估算，兼容正在运行的 v0.3 批次。
+python -m dataset_generation.statistics --source-dir dataset
+```
+
+`--num-samples` 是计划处理的 prompt 数，失败项不会进入三个训练分区；1,000 条全部有效时划分为 800 / 100 / 100。自动划分在本次运行完成或暂停时执行。完整说明见 [v0.3.1 训练数据流水线](docs/dataset_v031.md)。
+
+v0.3 的自动生成流程继续支持 forest、desert、ice、city、dungeon、fantasy、cyberpunk 七类场景，并执行 Qwen 生成、校验、渲染与断点恢复。
 
 ```bash
 # 无需 API Key，生成完整 prompt 清单。
@@ -77,6 +90,8 @@ GameWorldLM/
     qwen_generator.py Qwen 调用适配及逐次请求限速
     dataset_builder.py 生成、校验、渲染与训练数据汇总
     storage.py       SQLite 检查点和可恢复 JSONL 输出
+    splits.py        有效样本复检、80/10/10 划分和离线快照
+    statistics.py    数量、对象分布、实际耗时和完成时间估算
   tests/             单元和端到端离线测试
   docs/previews/     五组可直接查看的 JSON / PNG
   .github/workflows/ci.yml

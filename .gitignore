@@ -19,6 +19,8 @@ dataset/manifest.json
 dataset/dataset_info.json
 dataset/report.json
 dataset/prompt_report.json
+dataset/statistics.json
+dataset/split_manifest.json
 dataset/*.json.tmp
 dataset/.generation.lock
 dataset/STOP

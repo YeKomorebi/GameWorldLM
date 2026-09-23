@@ -16,13 +16,16 @@ from world.evaluation import evaluate_response
 
 from .prompt_generator import (
     PROMPT_VERSION,
-    THEMES,
     PromptSpec,
     generate_prompts,
     inventory_summary,
+    load_prompts,
+    prompt_group,
     write_prompts,
 )
 from .qwen_generator import QwenGenerator
+from .splits import DATASET_VERSION, export_records
+from .statistics import Statistics, generation_duration
 from .storage import Checkpoints, output_lock
 
 
@@ -38,7 +41,7 @@ def collect_result(case: PromptSpec, directory: Path, root: Path, identity: dict
     record = read_json(paths[0]) if paths else {}
     run_dir = paths[0].parent if paths else None
     result = {
-        "dataset_version": PROMPT_VERSION,
+        "dataset_version": DATASET_VERSION,
         "id": case.id,
         "theme": case.theme,
         "prompt": case.prompt,
@@ -60,6 +63,7 @@ def collect_result(case: PromptSpec, directory: Path, root: Path, identity: dict
         "actual_models": [],
         "http_status": None,
         "object_count": None,
+        "generation_seconds": generation_duration(record),
         "quality": "automatically_validated_not_human_reviewed",
     }
     if result["status"] == "running":
@@ -120,6 +124,7 @@ def collect_result(case: PromptSpec, directory: Path, root: Path, identity: dict
                 {"role": "assistant", "content": world.model_dump_json()}
             ]
             result["object_count"] = len(world.objects)
+            result["object_counts"] = dict(Counter(obj.object_type for obj in world.objects))
             result["world_sha256"] = record["world_sha256"]
         except (ValueError, KeyError, OSError, TypeError) as exc:
             result.update(status="artifact_error", error=str(exc))
@@ -132,63 +137,27 @@ def collect_result(case: PromptSpec, directory: Path, root: Path, identity: dict
     return result
 
 
-class Statistics:
-    def __init__(self, planned: int):
-        self.planned = planned
-        self.succeeded = self.failed = self.objects = self.attempts = self.tokens = 0
-        self.unknown_usage = 0
-        self.reasons: Counter = Counter()
-        self.statuses: Counter = Counter()
-        self.themes = {theme: {"succeeded": 0, "failed": 0} for theme in THEMES}
-
-    def add(self, row: dict) -> None:
-        success = row["status"] == "success"
-        self.succeeded += int(success)
-        self.failed += int(not success)
-        self.objects += row["object_count"] or 0
-        self.attempts += row["attempts"]
-        self.tokens += row["reported_total_tokens"]
-        self.unknown_usage += row["attempts_without_usage"]
-        self.reasons.update(row["failure_reasons"])
-        self.statuses.update([row["status"]])
-        self.themes[row["theme"]]["succeeded" if success else "failed"] += 1
-
-    def report(self, status: str, reason: str | None = None) -> dict:
-        processed = self.succeeded + self.failed
-        return {
-            "updated_at": utc_now(),
-            "status": status,
-            "stop_reason": reason,
-            "planned": self.planned,
-            "processed": processed,
-            "pending": self.planned - processed,
-            "succeeded": self.succeeded,
-            "failed": self.failed,
-            "success_rate": self.succeeded / processed if processed else None,
-            "average_object_count": self.objects / self.succeeded if self.succeeded else None,
-            "failure_reason_distribution": dict(sorted(self.reasons.items())),
-            "status_distribution": dict(sorted(self.statuses.items())),
-            "themes": self.themes,
-            "sdk_attempts": self.attempts,
-            "reported_total_tokens": self.tokens,
-            "attempts_without_usage": self.unknown_usage,
-            "metric_definitions": {
-                "success_rate": "successful / processed; pending excluded",
-                "average_object_count": "objects in successful worlds / successful samples",
-                "failure_reason_distribution": (
-                    "samples per distinct error code; multiple codes possible"
-                ),
-                "reported_total_tokens": "sum of reported usage; not an exact billing total",
-                "sdk_attempts": "logical SDK calls; SDK transport retries may add HTTP requests",
-            },
-        }
-
-
 class DatasetBuilder:
-    def __init__(self, root: str | Path, generator: QwenGenerator, *, count=10_000, seed=42):
+    def __init__(
+        self,
+        root: str | Path,
+        generator: QwenGenerator,
+        *,
+        count=10_000,
+        seed=42,
+        cases: list[PromptSpec] | None = None,
+    ):
         self.root = Path(root).resolve()
         self.generator = generator
-        self.cases = generate_prompts(count, seed)
+        self.cases = generate_prompts(count, seed) if cases is None else cases
+        if (
+            not self.cases
+            or len({case.id for case in self.cases}) != len(self.cases)
+            or len({prompt_group(case.prompt) for case in self.cases}) != len(self.cases)
+        ):
+            raise ValueError(
+                "Prompt cases must be nonempty, with unique IDs and normalized prompts"
+            )
         self.seed = seed
 
     def run(self, *, limit: int | None = None, max_total_tokens: int | None = None) -> dict:
@@ -224,31 +193,40 @@ class DatasetBuilder:
                         "inventory": inventory_summary(self.cases),
                     },
                 )
-            write_json(
-                self.root / "dataset_info.json",
-                {
-                    "gameworldlm_v03": {
-                        "file_name": "train.jsonl",
-                        "formatting": "sharegpt",
-                        "columns": {"messages": "messages"},
-                        "tags": {
-                            "role_tag": "role",
-                            "content_tag": "content",
-                            "user_tag": "user",
-                            "assistant_tag": "assistant",
-                            "system_tag": "system",
-                        },
-                    },
-                },
-            )
             store = Checkpoints(self.root)
             try:
-                return self._run(store, limit, max_total_tokens)
+                report = self._run(store, limit, max_total_tokens)
+                snapshot = export_records(
+                    store.records(),
+                    self.root,
+                    source_root=self.root,
+                    seed=self.seed,
+                    planned=len(self.cases),
+                )
+                report["splits"] = snapshot["splits"]
+                report["split_valid_count"] = snapshot["valid_count"]
+                for name in (
+                    "valid_count",
+                    "failed_count",
+                    "object_distribution",
+                    "average_object_count",
+                ):
+                    report[name] = snapshot[name]
+                report["export_rejected_count"] = snapshot["status_distribution"].get(
+                    "export_rejected", 0
+                )
+                if report["export_rejected_count"]:
+                    report["status"] = "export_failed"
+                    report["stop_reason"] = (
+                        "Training export rejected recorded successes; see failed.jsonl"
+                    )
+                write_json(self.root / "report.json", report)
+                return report
             finally:
                 store.close()
 
     def _run(self, store: Checkpoints, limit: int | None, max_tokens: int | None) -> dict:
-        stats = Statistics(len(self.cases))
+        stats = Statistics(len(self.cases), self.root)
         states = store.states()
         by_id = {case.id: case for case in self.cases}
         if set(states) - by_id.keys():
@@ -318,7 +296,7 @@ class DatasetBuilder:
                         sample_id,
                         collect_result(case, directory, self.root, self.generator.identity),
                     )
-            stats = Statistics(len(self.cases))
+            stats = Statistics(len(self.cases), self.root)
             for row in store.rebuild_jsonl():
                 stats.add(row)
         except Exception:
@@ -335,7 +313,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Build a resumable Qwen game world instruction dataset"
     )
-    parser.add_argument("--count", type=int, default=10_000)
+    parser.add_argument(
+        "--num-samples",
+        "--count",
+        dest="num_samples",
+        type=int,
+        help="Total prompts in this batch; defaults to 10000 or the input file size",
+    )
+    parser.add_argument("--prompts-file", type=Path, help="Existing PromptSpec JSONL or JSON array")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-dir", type=Path, default=Path("dataset"))
     parser.add_argument("--env-file", default=".env")
@@ -355,8 +340,14 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     generator = None
     try:
+        cases = (
+            load_prompts(args.prompts_file, args.num_samples)
+            if args.prompts_file is not None
+            else generate_prompts(
+                10_000 if args.num_samples is None else args.num_samples, args.seed
+            )
+        )
         if args.prepare_only:
-            cases = generate_prompts(args.count, args.seed)
             with output_lock(args.output_dir):
                 digest = write_prompts(args.output_dir / "prompts.jsonl", cases)
                 summary = inventory_summary(cases) | {"sha256": digest, "seed": args.seed}
@@ -370,14 +361,22 @@ def main(argv: list[str] | None = None) -> int:
             tile_size=args.tile_size,
             requests_per_minute=args.requests_per_minute,
         )
-        report = DatasetBuilder(args.output_dir, generator, count=args.count, seed=args.seed).run(
+        report = DatasetBuilder(args.output_dir, generator, cases=cases, seed=args.seed).run(
             limit=args.limit,
             max_total_tokens=args.max_total_tokens,
         )
         print(json.dumps(report, indent=2))
         if report["status"] == "interrupted":
             return 130
-        return 0 if report["status"] == "completed" and not report["failed"] else 1
+        return (
+            0
+            if (
+                report["status"] == "completed"
+                and not report["failed"]
+                and not report["export_rejected_count"]
+            )
+            else 1
+        )
     except (ValueError, OSError) as exc:
         print(f"Dataset generation failed: {exc}", file=sys.stderr)
         return 1

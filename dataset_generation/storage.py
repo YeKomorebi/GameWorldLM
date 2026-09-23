@@ -75,9 +75,9 @@ class Checkpoints:
 
     def rebuild_jsonl(self) -> Iterator[dict]:
         """Recover even if the previous process died during a JSONL append."""
-        train = self.root / "train.jsonl.tmp"
+        valid = self.root / "valid.jsonl.tmp"
         failed = self.root / "failed.jsonl.tmp"
-        with train.open("w", encoding="utf-8", newline="\n") as good:
+        with valid.open("w", encoding="utf-8", newline="\n") as good:
             with failed.open("w", encoding="utf-8", newline="\n") as bad:
                 for record in self.records():
                     target = good if record["status"] == "success" else bad
@@ -86,11 +86,11 @@ class Checkpoints:
                 for stream in (good, bad):
                     stream.flush()
                     os.fsync(stream.fileno())
-        train.replace(self.root / "train.jsonl")
+        valid.replace(self.root / "valid.jsonl")
         failed.replace(self.root / "failed.jsonl")
 
     def append_jsonl(self, record: dict) -> None:
-        name = "train.jsonl" if record["status"] == "success" else "failed.jsonl"
+        name = "valid.jsonl" if record["status"] == "success" else "failed.jsonl"
         with (self.root / name).open("a", encoding="utf-8", newline="\n") as stream:
             stream.write(json.dumps(record, ensure_ascii=False) + "\n")
             stream.flush()
@@ -98,3 +98,24 @@ class Checkpoints:
 
     def close(self) -> None:
         self.connection.close()
+
+
+def read_snapshot(root: Path, num_samples: int | None = None) -> list[dict]:
+    if num_samples is not None and (
+        isinstance(num_samples, bool) or not isinstance(num_samples, int) or num_samples < 1
+    ):
+        raise ValueError("num_samples must be a positive integer")
+    database = (root / "checkpoint.sqlite3").resolve()
+    if not database.is_file():
+        raise ValueError(f"No checkpoint database in {root}")
+    connection = sqlite3.connect(database.as_uri() + "?mode=ro", uri=True)
+    try:
+        rows = connection.execute(
+            "SELECT result FROM samples WHERE state='finished' ORDER BY rowid LIMIT ?",
+            (-1 if num_samples is None else num_samples,),
+        ).fetchall()
+    finally:
+        connection.close()
+    if num_samples is not None and len(rows) < num_samples:
+        raise ValueError(f"Requested {num_samples} samples but only {len(rows)} are finished")
+    return [json.loads(result) for (result,) in rows]

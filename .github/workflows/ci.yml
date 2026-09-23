@@ -20,6 +20,8 @@ jobs:
       - run: gameworldlm-real --help
       - run: gameworldlm-dataset --help
       - run: gameworldlm-build-dataset --help
+      - run: gameworldlm-split-dataset --help
+      - run: gameworldlm-dataset-stats --help
       - run: gameworldlm-build-dataset --prepare-only --output-dir outputs/prompt-inventory
       - run: ruff check .
       - run: pytest -q

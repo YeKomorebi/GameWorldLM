@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gameworldlm"
-version = "0.3.0"
+version = "0.3.1"
 description = "Natural language to validated spatial tokens and 2D world maps"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -24,6 +24,8 @@ gameworldlm-real = "examples.real_generation:main"
 gameworldlm-dataset = "dataset.export:main"
 gameworldlm-build-dataset = "dataset_generation.dataset_builder:main"
 gameworldlm-prompts = "dataset_generation.prompt_generator:main"
+gameworldlm-split-dataset = "dataset_generation.splits:main"
+gameworldlm-dataset-stats = "dataset_generation.statistics:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

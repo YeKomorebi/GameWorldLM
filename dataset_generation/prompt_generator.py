@@ -3,6 +3,7 @@
 import hashlib
 import json
 import random
+import unicodedata
 from collections import Counter
 from pathlib import Path
 from typing import Literal, get_args
@@ -148,6 +149,45 @@ class PromptSpec(BaseModel):
     descriptors: dict[str, str]
 
 
+def prompt_group(prompt: str) -> str:
+    normalized = " ".join(unicodedata.normalize("NFKC", prompt).split()).casefold()
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
+def load_prompts(path: str | Path, num_samples: int | None = None) -> list[PromptSpec]:
+    """Select the first N existing instructions, retaining their IDs and expectations."""
+    if num_samples is not None and (
+        isinstance(num_samples, bool) or not isinstance(num_samples, int) or num_samples < 1
+    ):
+        raise ValueError("num_samples must be a positive integer")
+    source = Path(path)
+    content = source.read_text(encoding="utf-8-sig")
+    if source.suffix.lower() == ".json":
+        data = json.loads(content)
+        if not isinstance(data, list):
+            raise ValueError("Prompt JSON must be an array of PromptSpec objects")
+    else:
+        data = []
+        for number, line in enumerate(content.splitlines(), 1):
+            if line.strip():
+                try:
+                    data.append(json.loads(line))
+                except ValueError as exc:
+                    raise ValueError(f"Invalid prompt JSON at line {number}") from exc
+    cases = [PromptSpec.model_validate(item) for item in data]
+    if not cases:
+        raise ValueError("Prompt inventory is empty")
+    if any(not case.prompt.strip() or len(case.prompt) > 8000 for case in cases):
+        raise ValueError("Each prompt must contain 1..8000 characters and cannot be blank")
+    if len({case.id for case in cases}) != len(cases):
+        raise ValueError("Prompt IDs must be unique")
+    if len({prompt_group(case.prompt) for case in cases}) != len(cases):
+        raise ValueError("Normalized prompts must be unique")
+    if num_samples is not None and num_samples > len(cases):
+        raise ValueError(f"Requested {num_samples} prompts but only {len(cases)} are available")
+    return cases if num_samples is None else cases[:num_samples]
+
+
 def generate_prompts(count: int = 10_000, seed: int = 42) -> list[PromptSpec]:
     if isinstance(count, bool) or not isinstance(count, int) or not 1 <= count <= 100_000:
         raise ValueError("count must be an integer in [1, 100000]")
@@ -230,7 +270,9 @@ def inventory_summary(cases: list[PromptSpec]) -> dict:
     return {
         "total": len(cases),
         "themes": dict(Counter(case.theme for case in cases)),
-        "relations": dict(Counter(case.descriptors["relation"] for case in cases)),
+        "relations": dict(
+            Counter(case.descriptors.get("relation", "unspecified") for case in cases)
+        ),
         "unique_prompts": len({case.prompt for case in cases}),
         "theme_biomes": THEME_BIOMES,
     }
@@ -242,7 +284,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Generate balanced game scene instructions offline"
     )
-    parser.add_argument("--count", type=int, default=10_000)
+    parser.add_argument("--num-samples", "--count", dest="count", type=int, default=10_000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", type=Path, default=Path("dataset/prompts.jsonl"))
     args = parser.parse_args(argv)
