@@ -1,0 +1,261 @@
+{
+  "schema_version": "1.0",
+  "scene": "apocalyptic_city",
+  "map": {
+    "width": 32,
+    "height": 24,
+    "biome": "city"
+  },
+  "objects": [
+    {
+      "object_type": "road",
+      "id": "road_001",
+      "position": [
+        0,
+        11
+      ],
+      "attributes": {
+        "size": [
+          16,
+          3
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "road",
+      "id": "road_002",
+      "position": [
+        16,
+        11
+      ],
+      "attributes": {
+        "size": [
+          16,
+          3
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_001",
+      "position": [
+        3,
+        3
+      ],
+      "attributes": {
+        "size": [
+          5,
+          5
+        ],
+        "style": "abandoned",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_002",
+      "position": [
+        19,
+        3
+      ],
+      "attributes": {
+        "size": [
+          5,
+          5
+        ],
+        "style": "abandoned",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_003",
+      "position": [
+        5,
+        17
+      ],
+      "attributes": {
+        "size": [
+          5,
+          5
+        ],
+        "style": "abandoned",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "house",
+      "id": "house_004",
+      "position": [
+        22,
+        17
+      ],
+      "attributes": {
+        "size": [
+          5,
+          5
+        ],
+        "style": "abandoned",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "vehicle",
+      "id": "vehicle_001",
+      "position": [
+        5,
+        12
+      ],
+      "attributes": {
+        "size": [
+          2,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "vehicle",
+      "id": "vehicle_002",
+      "position": [
+        15,
+        12
+      ],
+      "attributes": {
+        "size": [
+          2,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "vehicle",
+      "id": "vehicle_003",
+      "position": [
+        26,
+        12
+      ],
+      "attributes": {
+        "size": [
+          2,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_001",
+      "position": [
+        10,
+        8
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_002",
+      "position": [
+        19,
+        15
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_003",
+      "position": [
+        29,
+        7
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_001",
+      "position": [
+        13,
+        4
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_002",
+      "position": [
+        15,
+        20
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "connected_to",
+      "source": "road_001",
+      "target": "road_002"
+    },
+    {
+      "relation_type": "near",
+      "source": "monster_001",
+      "target": "house_001"
+    }
+  ]
+}

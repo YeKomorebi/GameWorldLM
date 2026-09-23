@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.0",
+  "scene": "desert_ruins",
+  "map": {
+    "width": 32,
+    "height": 24,
+    "biome": "desert"
+  },
+  "objects": [
+    {
+      "object_type": "dune",
+      "id": "dune_001",
+      "position": [
+        2,
+        2
+      ],
+      "attributes": {
+        "size": [
+          8,
+          4
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "dune",
+      "id": "dune_002",
+      "position": [
+        23,
+        17
+      ],
+      "attributes": {
+        "size": [
+          7,
+          4
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "ruin",
+      "id": "ruin_001",
+      "position": [
+        5,
+        10
+      ],
+      "attributes": {
+        "size": [
+          4,
+          4
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "ruin",
+      "id": "ruin_002",
+      "position": [
+        13,
+        6
+      ],
+      "attributes": {
+        "size": [
+          5,
+          4
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "ruin",
+      "id": "ruin_003",
+      "position": [
+        19,
+        14
+      ],
+      "attributes": {
+        "size": [
+          3,
+          4
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "portal",
+      "id": "portal_001",
+      "position": [
+        25,
+        7
+      ],
+      "attributes": {
+        "size": [
+          2,
+          3
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_001",
+      "position": [
+        10,
+        13
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "monster",
+      "id": "monster_002",
+      "position": [
+        23,
+        10
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_001",
+      "position": [
+        3,
+        19
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_002",
+      "position": [
+        15,
+        19
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_003",
+      "position": [
+        21,
+        3
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "near",
+      "source": "monster_001",
+      "target": "ruin_001"
+    },
+    {
+      "relation_type": "near",
+      "source": "monster_002",
+      "target": "portal_001"
+    }
+  ]
+}

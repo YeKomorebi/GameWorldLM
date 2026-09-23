@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0",
+  "scene": "snow_castle",
+  "map": {
+    "width": 32,
+    "height": 24,
+    "biome": "snow"
+  },
+  "objects": [
+    {
+      "object_type": "castle",
+      "id": "castle_001",
+      "position": [
+        11,
+        4
+      ],
+      "attributes": {
+        "size": [
+          9,
+          7
+        ],
+        "style": "ice",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tower",
+      "id": "tower_001",
+      "position": [
+        6,
+        5
+      ],
+      "attributes": {
+        "size": [
+          3,
+          4
+        ],
+        "style": "ice",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tower",
+      "id": "tower_002",
+      "position": [
+        23,
+        5
+      ],
+      "attributes": {
+        "size": [
+          3,
+          4
+        ],
+        "style": "ice",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "road",
+      "id": "road_001",
+      "position": [
+        14,
+        11
+      ],
+      "attributes": {
+        "size": [
+          3,
+          12
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "npc",
+      "id": "npc_001",
+      "position": [
+        12,
+        12
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "npc",
+      "id": "npc_002",
+      "position": [
+        18,
+        12
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_001",
+      "position": [
+        4,
+        16
+      ],
+      "attributes": {
+        "size": [
+          2,
+          2
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_002",
+      "position": [
+        24,
+        17
+      ],
+      "attributes": {
+        "size": [
+          2,
+          2
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "rock",
+      "id": "rock_003",
+      "position": [
+        27,
+        12
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_001",
+      "position": [
+        2,
+        2
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "frost",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_002",
+      "position": [
+        28,
+        2
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "frost",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_003",
+      "position": [
+        5,
+        21
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "frost",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_004",
+      "position": [
+        25,
+        21
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "frost",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_005",
+      "position": [
+        8,
+        17
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": "frost",
+        "material": null,
+        "tags": []
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "connected_to",
+      "source": "road_001",
+      "target": "castle_001"
+    },
+    {
+      "relation_type": "near",
+      "source": "tower_001",
+      "target": "castle_001"
+    },
+    {
+      "relation_type": "near",
+      "source": "npc_001",
+      "target": "castle_001"
+    }
+  ]
+}

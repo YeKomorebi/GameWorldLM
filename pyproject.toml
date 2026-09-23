@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gameworldlm"
+version = "0.1.0"
+description = "Natural language to validated spatial tokens and 2D world maps"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+  "openai>=1.54,<3",
+  "pydantic>=2.9,<3",
+  "pygame>=2.6.1,<3",
+  "python-dotenv>=1.0,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1", "pillow>=10,<13"]
+
+[project.scripts]
+gameworldlm = "gameworldlm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*"]
+
+[tool.setuptools.package-data]
+examples = ["prompts.json"]
+assets = ["placeholder/*.png", "placeholder/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

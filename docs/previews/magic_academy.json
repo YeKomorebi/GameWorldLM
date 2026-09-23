@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.0",
+  "scene": "magic_academy",
+  "map": {
+    "width": 32,
+    "height": 24,
+    "biome": "arcane"
+  },
+  "objects": [
+    {
+      "object_type": "courtyard",
+      "id": "courtyard_001",
+      "position": [
+        9,
+        10
+      ],
+      "attributes": {
+        "size": [
+          14,
+          10
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "library",
+      "id": "library_001",
+      "position": [
+        12,
+        3
+      ],
+      "attributes": {
+        "size": [
+          8,
+          5
+        ],
+        "style": "gothic",
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tower",
+      "id": "tower_001",
+      "position": [
+        3,
+        7
+      ],
+      "attributes": {
+        "size": [
+          3,
+          5
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tower",
+      "id": "tower_002",
+      "position": [
+        26,
+        7
+      ],
+      "attributes": {
+        "size": [
+          3,
+          5
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "portal",
+      "id": "portal_001",
+      "position": [
+        15,
+        11
+      ],
+      "attributes": {
+        "size": [
+          2,
+          3
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "crystal",
+      "id": "crystal_001",
+      "position": [
+        11,
+        15
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "crystal",
+      "id": "crystal_002",
+      "position": [
+        20,
+        15
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "crystal",
+      "id": "crystal_003",
+      "position": [
+        16,
+        18
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "npc",
+      "id": "npc_001",
+      "position": [
+        13,
+        17
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "npc",
+      "id": "npc_002",
+      "position": [
+        19,
+        17
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_001",
+      "position": [
+        5,
+        18
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    },
+    {
+      "object_type": "tree",
+      "id": "tree_002",
+      "position": [
+        27,
+        18
+      ],
+      "attributes": {
+        "size": [
+          1,
+          1
+        ],
+        "style": null,
+        "material": null,
+        "tags": []
+      }
+    }
+  ],
+  "relations": [
+    {
+      "relation_type": "inside",
+      "source": "npc_001",
+      "target": "courtyard_001"
+    },
+    {
+      "relation_type": "inside",
+      "source": "npc_002",
+      "target": "courtyard_001"
+    },
+    {
+      "relation_type": "inside",
+      "source": "portal_001",
+      "target": "courtyard_001"
+    },
+    {
+      "relation_type": "near",
+      "source": "npc_001",
+      "target": "crystal_001"
+    }
+  ]
+}

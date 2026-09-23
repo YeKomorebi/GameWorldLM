@@ -1,0 +1,114 @@
+{
+  "provider": "fixture",
+  "model": "hand-authored",
+  "source": "fixture",
+  "scenarios": [
+    {
+      "name": "dark_forest_village",
+      "prompt": "一个黑暗森林中的魔法村庄，有3个木屋、一条从北到南的河流、一座桥和两个怪物，周围有树木。",
+      "status": "ok",
+      "attempts": 1,
+      "object_counts": {
+        "river": 1,
+        "road": 2,
+        "bridge": 1,
+        "house": 3,
+        "monster": 2,
+        "tree": 12
+      },
+      "expected_counts": {
+        "house": 3,
+        "river": 1,
+        "bridge": 1,
+        "monster": 2
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "snow_castle",
+      "prompt": "一座冰雪城堡，有两座守卫塔、一条通往城堡的道路、三块岩石和两个守卫。",
+      "status": "ok",
+      "attempts": 1,
+      "object_counts": {
+        "castle": 1,
+        "tower": 2,
+        "road": 1,
+        "npc": 2,
+        "rock": 3,
+        "tree": 5
+      },
+      "expected_counts": {
+        "castle": 1,
+        "tower": 2,
+        "road": 1,
+        "rock": 3,
+        "npc": 2
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "desert_ruins",
+      "prompt": "一片沙漠遗迹，有三座残破建筑、两个沙丘、一座传送门和两个怪物。",
+      "status": "ok",
+      "attempts": 1,
+      "object_counts": {
+        "dune": 2,
+        "ruin": 3,
+        "portal": 1,
+        "monster": 2,
+        "rock": 3
+      },
+      "expected_counts": {
+        "ruin": 3,
+        "dune": 2,
+        "portal": 1,
+        "monster": 2
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "apocalyptic_city",
+      "prompt": "一座末日城市，有四栋废弃房屋、两段相连的道路、三辆废弃车辆和三个怪物。",
+      "status": "ok",
+      "attempts": 1,
+      "object_counts": {
+        "road": 2,
+        "house": 4,
+        "vehicle": 3,
+        "monster": 3,
+        "rock": 2
+      },
+      "expected_counts": {
+        "house": 4,
+        "road": 2,
+        "vehicle": 3,
+        "monster": 3
+      },
+      "mismatches": {}
+    },
+    {
+      "name": "magic_academy",
+      "prompt": "一所魔法学院，有一座图书馆、两座法师塔、一个庭院、三颗魔法水晶、一座传送门和两个学徒，学徒在庭院里。",
+      "status": "ok",
+      "attempts": 1,
+      "object_counts": {
+        "courtyard": 1,
+        "library": 1,
+        "tower": 2,
+        "portal": 1,
+        "crystal": 3,
+        "npc": 2,
+        "tree": 2
+      },
+      "expected_counts": {
+        "library": 1,
+        "tower": 2,
+        "courtyard": 1,
+        "crystal": 3,
+        "portal": 1,
+        "npc": 2
+      },
+      "mismatches": {}
+    }
+  ]
+}
