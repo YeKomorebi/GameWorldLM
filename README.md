@@ -1,6 +1,19 @@
-# GameWorldLM v0.2
+# GameWorldLM v0.3
 
 GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。第一阶段使用现有 OpenAI 或 Qwen API，不训练模型，也不让模型生成可执行游戏代码。
+
+v0.3 新增可恢复的自动数据生成流水线：离线构造 **10,000 条不重复 prompt**，覆盖 forest、desert、ice、city、dungeon、fantasy、cyberpunk；使用 Qwen 执行生成、校验、渲染。成功样本写入 `dataset/train.jsonl`，失败样本写入 `dataset/failed.jsonl`，统计保存到 `dataset/report.json`。World State schema 与原有测试保持不变。
+
+```bash
+# 无需 API Key，生成完整 prompt 清单。
+python -m dataset_generation.dataset_builder --prepare-only
+# 使用 .env 中的 Qwen 配置，先处理七条，覆盖全部主题。
+python -m dataset_generation.dataset_builder --limit 7
+# 恢复同一批次，跳过已完成的成功和失败样本。
+python -m dataset_generation.dataset_builder
+```
+
+`--limit` 限制本次新增样本数；总清单仍为 10,000 条。完整运行会产生真实 API 费用，默认串行、每分钟最多启动 20 次逻辑请求、每个场景最多三次生成/修正。运行期间创建 `dataset/STOP` 文件会在当前样本结束后暂停；移除后重新运行即可继续。详见 [v0.3 数据流水线](docs/dataset_generation.md)。
 
 v0.2 新增真实生成记录、十场景 Qwen 测试入口和 LoRA 数据集导出，保持原有 World State schema 不变。完整说明见 [数据记录与训练格式](docs/dataset_format.md)。
 
@@ -59,6 +72,11 @@ GameWorldLM/
     real_prompts.json 十个真实调用测试 prompt
     real_generation.py 真实 API 批量生成入口
   dataset/           逐次记录、质量过滤和 LoRA 数据导出
+  dataset_generation/
+    prompt_generator.py 均衡、多样、可复现的场景 prompt 清单
+    qwen_generator.py Qwen 调用适配及逐次请求限速
+    dataset_builder.py 生成、校验、渲染与训练数据汇总
+    storage.py       SQLite 检查点和可恢复 JSONL 输出
   tests/             单元和端到端离线测试
   docs/previews/     五组可直接查看的 JSON / PNG
   .github/workflows/ci.yml

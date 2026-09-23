@@ -11,3 +11,15 @@ dist/
 !.env.example
 outputs/
 *.log
+# v0.3 generated data lives beside the existing dataset source package.
+dataset/*.jsonl
+dataset/*.jsonl.tmp
+dataset/*.sqlite3*
+dataset/manifest.json
+dataset/dataset_info.json
+dataset/report.json
+dataset/prompt_report.json
+dataset/*.json.tmp
+dataset/.generation.lock
+dataset/STOP
+dataset/artifacts/
