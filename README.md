@@ -1,6 +1,17 @@
-# GameWorldLM v0.4
+# GameWorldLM v0.4.1
 
 GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。支持 OpenAI / Qwen API 生成，并在 v0.4 增加本地 LoRA 训练；模型输出结构化世界数据，不生成可执行游戏代码。
+
+v0.4.1 增加空间错误分析、100 条固定独立 benchmark、关系级指标和 Spatial Curriculum Dataset Builder。本轮只分析与准备数据，没有重新训练：269 条通过校验和渲染的合成样本，加上原 115 条训练样本，组成 384 条候选训练池；原 14 条验证集、14 条测试集保持独立。完整结果、统计口径与运行方法见 [v0.4.1 空间分析报告](docs/v0_4_1_spatial_analysis.md)。
+
+```bash
+# 不加载模型，分析已保存的 v0.4 原始预测。
+python -m evaluation.spatial --samples outputs/training/qwen7b_lora/evaluation_samples.jsonl --base outputs/training/qwen7b_lora/base_predictions.jsonl --lora outputs/training/qwen7b_lora/lora_predictions.jsonl --output-dir outputs/evaluation/v0_4_1
+# 指定关系和难度；输出目录必须不存在。
+python -m dataset_generation.spatial_curriculum --relation inside --difficulty medium --num-samples 30 --output-dir outputs/curriculum/inside-medium
+```
+
+固定 benchmark 位于 `evaluation/prompts.jsonl`，不得用于训练或调参。新增 curriculum 使用几何构造，明确标记 `source=synthetic_constructive`，不是 Qwen 输出；原 Qwen 生成器及 10,000 条生成能力继续保留。
 
 v0.4 新增独立的 **Qwen2.5-7B-Instruct + PEFT LoRA** 训练模块，将已有有效世界转换为 chat 数据，固定划分 train / val / test，并自动完成训练、测试集推理和基座对比评估。支持 4-bit QLoRA 和独立的 20 样本 overfit smoke test，现有 schema、生成器、validator 和 renderer 保持不变。当前目标是验证小数据训练闭环；完整命令、loss masking 和评估口径见 [v0.4 LoRA Pipeline](docs/training_v04.md)。
 

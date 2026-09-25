@@ -26,6 +26,10 @@ jobs:
       - run: gameworldlm-train-lora --help
       - run: gameworldlm-infer-lora --help
       - run: gameworldlm-evaluate-lora --help
+      - run: gameworldlm-spatial-analysis --help
+      - run: gameworldlm-spatial-benchmark --help
+      - run: gameworldlm-spatial-curriculum --help
+      - run: gameworldlm-spatial-stats --help
       - run: gameworldlm-build-dataset --prepare-only --output-dir outputs/prompt-inventory
       - run: ruff check .
       - run: pytest -q

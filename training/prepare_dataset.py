@@ -98,6 +98,9 @@ def partition_counts(total: int, ratios: list[float]) -> list[int]:
 
 
 def prepare(config: ExperimentConfig) -> dict:
+    from evaluation.holdout import heldout_groups, reject_holdout
+
+    protected = heldout_groups()
     root = config.path(config.data.output_dir)
     system = config.path(config.data.system_prompt_file).read_text(encoding="utf-8").strip()
     if not system:
@@ -108,6 +111,7 @@ def prepare(config: ExperimentConfig) -> dict:
             try:
                 if original.get("status") != "success":
                     raise ValueError("Not a successful generation")
+                reject_holdout(original, protected)
                 row = validate_record(original, artifact_root)
                 group = prompt_group(row["prompt"])
                 if group in seen:

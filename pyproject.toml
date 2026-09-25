@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gameworldlm"
-version = "0.4.0"
+version = "0.4.1"
 description = "Natural language to validated spatial tokens and 2D world maps"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -34,16 +34,21 @@ gameworldlm-prepare-training = "training.prepare_dataset:main"
 gameworldlm-train-lora = "training.train_lora:main"
 gameworldlm-infer-lora = "training.infer_lora:main"
 gameworldlm-evaluate-lora = "training.evaluate_lora:main"
+gameworldlm-spatial-analysis = "evaluation.spatial:main"
+gameworldlm-spatial-benchmark = "evaluation.benchmark:main"
+gameworldlm-spatial-curriculum = "dataset_generation.spatial_curriculum:main"
+gameworldlm-spatial-stats = "evaluation.dataset_statistics:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*", "dataset*", "training*"]
+include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*", "dataset*", "training*", "evaluation*"]
 exclude = ["dataset.artifacts*"]
 
 [tool.setuptools.package-data]
 examples = ["prompts.json", "real_prompts.json"]
 assets = ["placeholder/*.png", "placeholder/*.md"]
 training = ["configs/*.json", "configs/*.txt"]
+evaluation = ["prompts.jsonl", "prompts.manifest.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

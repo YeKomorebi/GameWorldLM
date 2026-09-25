@@ -1,0 +1,15 @@
+{
+  "validated_curriculum": 269,
+  "nonblank_pngs": 269,
+  "candidate_train": 384,
+  "heldout_prompts": 128,
+  "heldout_overlap": 0,
+  "all_artifact_hashes_match": true,
+  "original_dataset_sha256": "398ac3ad751a675342d3e424b4193d8beebac554a2e8f70e0854d58d5336158f",
+  "schema_sha256": "84f4ae89879096eebb4088d0cf0996bd37ebef90efa3546fb8e1ef38f9b1e2d1",
+  "unchanged_v04_adapters": {
+    "qwen7b_lora": "daf1bfc0ff29f668749d6a42800371322e4ee3f4b02142cdb32d794da32ff6d3",
+    "overfit_smoke": "a00b97f5ad249faaa056dcdcc7d39610705cde68d5c1141b53aea8872d648493"
+  },
+  "retraining_started": false
+}

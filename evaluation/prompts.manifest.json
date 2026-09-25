@@ -1,0 +1,37 @@
+{
+  "version": "0.4.1",
+  "seed": 20260925,
+  "evaluation_only": true,
+  "count": 100,
+  "sha256": "8e89e382cc52161c95fa513d76a06bec1cca17944f119312cd0f681ee770396e",
+  "difficulty": {
+    "easy": 30,
+    "medium": 40,
+    "hard": 30
+  },
+  "focus_relation": {
+    "near": 34,
+    "inside": 33,
+    "connected_to": 33
+  },
+  "themes": {
+    "forest": 15,
+    "desert": 15,
+    "ice": 14,
+    "city": 14,
+    "dungeon": 14,
+    "fantasy": 14,
+    "cyberpunk": 14
+  },
+  "exclusion_files": [
+    "outputs/training/prepared/train.jsonl",
+    "outputs/training/prepared/val.jsonl",
+    "outputs/training/prepared/test.jsonl"
+  ],
+  "feasibility": "Each task has a constructive witness passing the canonical validator; answers are not exported in the prompt inventory.",
+  "difficulty_definition": {
+    "easy": "one relation, 3 objects",
+    "medium": "two shared-anchor/chain relations plus distractors, 5 objects",
+    "hard": "mixed relation types, boundary contact, shared anchor or chain, 9 objects"
+  }
+}
