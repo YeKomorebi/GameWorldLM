@@ -1,0 +1,10 @@
+{
+  "extends": "qwen7b_lora.json",
+  "training": {
+    "output_dir": "outputs/training/overfit_smoke",
+    "epochs": 20,
+    "lr_scheduler": "constant",
+    "warmup_ratio": 0.0
+  },
+  "smoke": {"enabled": true}
+}

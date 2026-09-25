@@ -1,0 +1,64 @@
+{
+  "project_root": "../..",
+  "model": {
+    "name_or_path": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "dtype": "bfloat16",
+    "attention_implementation": "sdpa",
+    "load_in_4bit": false,
+    "quantization_type": "nf4",
+    "double_quantization": true,
+    "local_files_only": false
+  },
+  "data": {
+    "sources": ["dataset", "outputs/real"],
+    "output_dir": "outputs/training/prepared",
+    "max_samples": 143,
+    "seed": 42,
+    "split_ratios": [0.8, 0.1, 0.1],
+    "system_prompt_file": "training/configs/system_prompt.txt"
+  },
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "bias": "none"
+  },
+  "training": {
+    "output_dir": "outputs/training/qwen7b_lora",
+    "seed": 42,
+    "epochs": 3,
+    "learning_rate": 0.0002,
+    "max_seq_length": 2048,
+    "long_sequence_policy": "chunk_assistant",
+    "overlap_tokens": 256,
+    "batch_size": 1,
+    "eval_batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "gradient_checkpointing": true,
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0,
+    "max_grad_norm": 1.0,
+    "optimizer": "adamw_torch",
+    "lr_scheduler": "cosine",
+    "dataloader_workers": 0,
+    "pad_to_multiple_of": 8,
+    "full_determinism": true,
+    "resume_from_checkpoint": null
+  },
+  "inference": {
+    "max_new_tokens": 4096,
+    "do_sample": false,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "repetition_penalty": 1.0,
+    "seed": 42
+  },
+  "smoke": {
+    "enabled": false,
+    "num_samples": 20,
+    "minimum_loss_reduction": 0.5,
+    "minimum_schema_pass_rate": 0.8
+  }
+}

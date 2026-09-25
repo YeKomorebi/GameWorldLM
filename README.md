@@ -1,6 +1,17 @@
-# GameWorldLM v0.3.1
+# GameWorldLM v0.4
 
-GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。第一阶段使用现有 OpenAI 或 Qwen API，不训练模型，也不让模型生成可执行游戏代码。
+GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**，再渲染为可检查的 2D 地图。支持 OpenAI / Qwen API 生成，并在 v0.4 增加本地 LoRA 训练；模型输出结构化世界数据，不生成可执行游戏代码。
+
+v0.4 新增独立的 **Qwen2.5-7B-Instruct + PEFT LoRA** 训练模块，将已有有效世界转换为 chat 数据，固定划分 train / val / test，并自动完成训练、测试集推理和基座对比评估。支持 4-bit QLoRA 和独立的 20 样本 overfit smoke test，现有 schema、生成器、validator 和 renderer 保持不变。当前目标是验证小数据训练闭环；完整命令、loss masking 和评估口径见 [v0.4 LoRA Pipeline](docs/training_v04.md)。
+
+143 条数据的真实训练与测试集评估已完成：LoRA 的严格 JSON / schema 通过率为 14/14，对象数量准确率为 14/14，空间校验通过率为 3/14。详见 [基座与 LoRA 对比报告](docs/base_vs_lora_report.md)。
+
+```bash
+python -m pip install -e ".[training,dev]"
+python -m training.prepare_dataset --config training/configs/qwen7b_lora.json
+python -m training.train_lora --config training/configs/qwen7b_lora.json
+python -m training.train_lora --config training/configs/overfit_smoke.json
+```
 
 v0.3.1 支持指定样本规模、复用已有 prompt，并自动按 **80% / 10% / 10%** 划分 train / val / test。成功全集保存在 `valid.jsonl`，失败样本保存在 `failed.jsonl`；报告包含总数、有效数、失败数、对象分布和预计完成时间。默认 **10,000 条生成能力**、World State schema 和原有测试均保留。
 
@@ -92,6 +103,13 @@ GameWorldLM/
     storage.py       SQLite 检查点和可恢复 JSONL 输出
     splits.py        有效样本复检、80/10/10 划分和离线快照
     statistics.py    数量、对象分布、实际耗时和完成时间估算
+  training/
+    configs/         基座版本、LoRA、QLoRA、smoke 和推理参数
+    prepare_dataset.py 有效数据复检、去重和可复现 chat 划分
+    data.py          assistant-only labels 与无截断滑动窗口
+    train_lora.py    PEFT 训练、逐 epoch checkpoint 和自动评估
+    infer_lora.py    原始基座 / adapter 推理
+    evaluate_lora.py 严格 JSON、schema、空间和数量指标
   tests/             单元和端到端离线测试
   docs/previews/     五组可直接查看的 JSON / PNG
   .github/workflows/ci.yml

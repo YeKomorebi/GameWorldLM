@@ -1,0 +1,5 @@
+{
+  "extends": "qwen7b_lora.json",
+  "model": {"load_in_4bit": true},
+  "training": {"output_dir": "outputs/training/qwen7b_qlora"}
+}

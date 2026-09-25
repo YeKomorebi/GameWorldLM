@@ -22,6 +22,10 @@ jobs:
       - run: gameworldlm-build-dataset --help
       - run: gameworldlm-split-dataset --help
       - run: gameworldlm-dataset-stats --help
+      - run: gameworldlm-prepare-training --help
+      - run: gameworldlm-train-lora --help
+      - run: gameworldlm-infer-lora --help
+      - run: gameworldlm-evaluate-lora --help
       - run: gameworldlm-build-dataset --prepare-only --output-dir outputs/prompt-inventory
       - run: ruff check .
       - run: pytest -q

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gameworldlm"
-version = "0.3.1"
+version = "0.4.0"
 description = "Natural language to validated spatial tokens and 2D world maps"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -17,6 +17,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "ruff>=0.9,<1", "pillow>=10,<13"]
+training = [
+  "torch==2.6.0", "transformers==4.57.6", "peft==0.15.2", "accelerate==1.6.0",
+  "bitsandbytes==0.45.5; platform_system == 'Linux'",
+]
 
 [project.scripts]
 gameworldlm = "gameworldlm.cli:main"
@@ -26,15 +30,20 @@ gameworldlm-build-dataset = "dataset_generation.dataset_builder:main"
 gameworldlm-prompts = "dataset_generation.prompt_generator:main"
 gameworldlm-split-dataset = "dataset_generation.splits:main"
 gameworldlm-dataset-stats = "dataset_generation.statistics:main"
+gameworldlm-prepare-training = "training.prepare_dataset:main"
+gameworldlm-train-lora = "training.train_lora:main"
+gameworldlm-infer-lora = "training.infer_lora:main"
+gameworldlm-evaluate-lora = "training.evaluate_lora:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*", "dataset*"]
+include = ["gameworldlm*", "llm*", "world*", "engine*", "assets*", "examples*", "dataset*", "training*"]
 exclude = ["dataset.artifacts*"]
 
 [tool.setuptools.package-data]
 examples = ["prompts.json", "real_prompts.json"]
 assets = ["placeholder/*.png", "placeholder/*.md"]
+training = ["configs/*.json", "configs/*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
