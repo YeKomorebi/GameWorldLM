@@ -17,6 +17,7 @@ from training.data import (
     tokenize_rows,
 )
 from training.evaluate_lora import comparison_report, evaluate_predictions
+from training.infer_lora import predict
 from training.prepare_dataset import partition_counts, prepare, verify_prepared
 from training.train_lora import check_run_directory
 
@@ -166,6 +167,22 @@ def test_trainer_counts_partial_accumulation_as_a_full_epoch(tmp_path):
     assert values[0] == 3
     assert values[1] == 29
     assert values[-1] == 87
+
+
+@pytest.mark.parametrize("deterministic", [False, True])
+def test_standalone_inference_honors_trainer_determinism(monkeypatch, tmp_path, deterministic):
+    pytest.importorskip("torch")
+    transformers = pytest.importorskip("transformers")
+    applied = []
+    monkeypatch.setattr(transformers, "enable_full_determinism", applied.append)
+    config = load_config(CONFIG)
+    config.training.full_determinism = deterministic
+    model = SimpleNamespace(eval=lambda: None, config=SimpleNamespace(use_cache=False))
+    path = tmp_path / "predictions.jsonl"
+    assert predict(model, None, [], config, path, base=True) == []
+    assert applied == ([config.training.seed] if deterministic else [])
+    metadata = json.loads(path.with_suffix(".metadata.json").read_text())
+    assert metadata["full_determinism"] == deterministic
 
 
 def sample(world, sample_id="example"):

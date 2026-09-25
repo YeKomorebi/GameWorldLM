@@ -26,7 +26,7 @@ LoRA spatial failures contain 11 `blocked_entity`, 7 `overlap`, 3 `not_connected
 
 Initial and final evaluation loss on the same training examples: **0.294725 -> 0.086612**, a **70.61% reduction**. These evaluation losses differ from the per-epoch logged training averages because training uses dropout and updates weights between batches. Training completed all 87 optimizer updates in 350.80 seconds. Base inference took 377.04 seconds; unmerged LoRA inference took 954.74 seconds for the same 14 prompts.
 
-Only the 40,370,176 LoRA parameters were trainable. All base-model weights were frozen. Each epoch checkpoint, the final adapter, resolved configuration, runtime versions, and raw predictions are preserved under `outputs/training/qwen7b_lora/` locally and on the server. Runtime artifacts and model weights are excluded from Git.
+Only the 40,370,176 LoRA parameters were trainable. All base-model weights were frozen. The complete run, including every epoch checkpoint, is preserved under `outputs/training/qwen7b_lora/` on the server. The final adapter, resolved configuration, runtime versions, and raw predictions are also copied to the local project under the same relative path. Runtime artifacts and model weights are excluded from Git.
 
 ## Reproduction
 
@@ -44,3 +44,13 @@ Only the 40,370,176 LoRA parameters were trainable. All base-model weights were 
 All 143 complete chat examples fit within 2048 tokens; the longest contains 1586 tokens. No target tokens were truncated, and no window splitting was needed in this run. Loss labels cover assistant outputs only.
 
 See [training instructions](training_v04.md) for the commands and independent overfit smoke test. The small test set and automatically generated training data do not establish generalization or gameplay quality. Improving spatial placement remains a separate next-stage task.
+
+## Additional Runtime Verification
+
+The independent smoke test completed on 2026-09-25. A fresh adapter trained for 20 epochs on exactly 20 training-split examples. Training-set evaluation loss fell from **0.284099 to 0.00023849**, a **99.916% reduction**. All **20/20** generated training examples passed JSON parsing, the schema, the spatial validator, object counts, and all generation expectations. The preset criteria (at least 50% loss reduction and 80% schema validity) both passed. This is memorization of training examples, not an additional held-out result. Its final validation loss was 0.383600, illustrating the intended overfitting.
+
+The 4-bit QLoRA runtime check also passed using the pinned 7B base, NF4 double quantization, and assistant-only labels. One 1079-token example (576 supervised tokens) completed a forward pass, backward pass, and AdamW update. Loss was finite (0.428783), 196 LoRA parameter tensors received nonzero gradients, and an adapter tensor changed after the optimizer step. Peak allocated GPU memory for this check was **10.63 GiB**. This verifies the 4-bit gradient path; the full 3-epoch experiment above used BF16 LoRA.
+
+The CUDA server's complete test suite passed **154 tests**, including standalone-inference determinism regression checks. GitHub CI passed for the implementation commit `21ec90e`, including the original generation and rendering tests. Existing schema, generator, validator, renderer, and pre-existing test files were not modified. Three spatially valid held-out LoRA predictions were also rendered without repairs under `outputs/training/lora_previews/`.
+
+A fresh CLI process reloaded the saved main adapter and reproduced the first held-out completion exactly with the same configured full determinism. The final artifact audit verified all **3 main checkpoints and 20 smoke checkpoints**, their optimizer/scheduler/RNG states, the final adapter checksums, complete prediction sets, disjoint 115/14/14 partitions, and that every smoke example belongs to the training partition. The audit is saved as `outputs/training/artifact_audit.json`; the reload check is `outputs/training/adapter_reload_check.json`.

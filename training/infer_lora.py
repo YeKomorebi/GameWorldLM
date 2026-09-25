@@ -18,15 +18,18 @@ def predict(
     model, tokenizer, samples, config, destination: Path, *, base: bool = False
 ) -> list[dict]:
     import torch
-    from transformers import set_seed
+    from transformers import enable_full_determinism, set_seed
 
     destination.parent.mkdir(parents=True, exist_ok=True)
+    if config.training.full_determinism:
+        enable_full_determinism(config.training.seed)
     model.eval()
     model.config.use_cache = True
     settings = config.inference
     metadata = {
         "model": config.model.model_dump(),
         "inference": settings.model_dump(),
+        "full_determinism": config.training.full_determinism,
         "variant": "base" if base else "lora",
         "sample_ids": [row["id"] for row in samples],
     }

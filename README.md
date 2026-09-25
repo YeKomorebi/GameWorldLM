@@ -4,7 +4,7 @@ GameWorldLM 将自然语言场景转换为 **Spatial Token / World State JSON**�
 
 v0.4 新增独立的 **Qwen2.5-7B-Instruct + PEFT LoRA** 训练模块，将已有有效世界转换为 chat 数据，固定划分 train / val / test，并自动完成训练、测试集推理和基座对比评估。支持 4-bit QLoRA 和独立的 20 样本 overfit smoke test，现有 schema、生成器、validator 和 renderer 保持不变。当前目标是验证小数据训练闭环；完整命令、loss masking 和评估口径见 [v0.4 LoRA Pipeline](docs/training_v04.md)。
 
-143 条数据的真实训练与测试集评估已完成：LoRA 的严格 JSON / schema 通过率为 14/14，对象数量准确率为 14/14，空间校验通过率为 3/14。详见 [基座与 LoRA 对比报告](docs/base_vs_lora_report.md)。
+143 条数据的真实训练与测试集评估已完成：LoRA 的严格 JSON / schema 通过率为 14/14，对象数量准确率为 14/14，空间校验通过率为 3/14。独立的 20 样本 overfit smoke test 通过全部校验；4-bit QLoRA 已验证前向、反向和参数更新。详见 [基座与 LoRA 对比报告](docs/base_vs_lora_report.md)。
 
 ```bash
 python -m pip install -e ".[training,dev]"

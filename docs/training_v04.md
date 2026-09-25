@@ -47,6 +47,8 @@ The tokenizer's actual chat template determines the assistant boundary. System, 
 
 Each epoch evaluates the validation set and saves a checkpoint. `epoch_metrics.json` records the mean logged optimizer-step training loss, validation loss, and checkpoint path. Losses use assistant labels; they are not whole-prompt language-modeling losses. Initial and final training-set evaluation losses use the same windows, enabling the overfit check. Seeds and deterministic settings improve repeatability on the same software and hardware; cross-device bitwise equality is not guaranteed.
 
+Standalone inference applies the same `training.full_determinism` setting as Trainer, including CUDA backend flags. The setting is recorded in prediction metadata and can reduce decoding speed in exchange for repeatability.
+
 To resume an interrupted run, set `training.resume_from_checkpoint` to one of its saved checkpoint directories and keep all other settings unchanged. The loader checks the previous configuration and dataset digest before writing. A fresh experiment must use an empty output directory; failures preserve diagnostics and write `status.json`.
 
 After training, the same frozen base is evaluated with adapters disabled, then with the trained adapter enabled. Both use identical held-out prompts, precision, tokenizer, greedy decoding, and token limits. No API calls, JSON repair, or generation retries are used during evaluation.
